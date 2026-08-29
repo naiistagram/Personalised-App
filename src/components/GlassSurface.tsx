@@ -15,14 +15,17 @@ type GlassSurfaceProps = PropsWithChildren<{
 }>;
 
 /**
- * The core "liquid glass" building block: a frosted, translucent surface with
- * a soft sheen highlight along the top edge, used for cards, pills and sheets.
+ * The core "liquid glass" building block: a frosted, translucent surface that
+ * bends light like real glass — a bright specular highlight top-left, a
+ * softer tinted pool of shadow at the bottom for depth, and a rim border that
+ * catches the light unevenly (bright top/left edge, dim bottom/right edge)
+ * instead of a flat single-tone outline.
  */
 export function GlassSurface({
   children,
   style,
   radius = radii.lg,
-  intensity = 40,
+  intensity = 46,
   tint = 'light',
   bordered = true,
   elevated = true,
@@ -45,11 +48,22 @@ export function GlassSurface({
           { backgroundColor: colors.glass },
         ]}
       />
+      {/* Specular highlight — light glancing off the top-left of the surface */}
       <LinearGradient
-        colors={['rgba(255,255,255,0.55)', 'rgba(255,255,255,0)']}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 0.9, y: 0.6 }}
+        colors={['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.18)', 'rgba(255,255,255,0)']}
+        locations={[0, 0.35, 0.85]}
+        start={{ x: 0.05, y: 0 }}
+        end={{ x: 0.95, y: 0.8 }}
         style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+      {/* Pooled tint at the base — how thicker glass darkens near the bottom edge */}
+      <LinearGradient
+        colors={['rgba(154,107,255,0)', 'rgba(120,80,190,0.14)']}
+        start={{ x: 0, y: 0.55 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
       />
       {bordered && (
         <View
@@ -59,7 +73,10 @@ export function GlassSurface({
             {
               borderRadius: radius,
               borderWidth: 1.5,
-              borderColor: colors.border,
+              borderTopColor: 'rgba(255,255,255,0.95)',
+              borderLeftColor: 'rgba(255,255,255,0.6)',
+              borderRightColor: 'rgba(255,255,255,0.28)',
+              borderBottomColor: 'rgba(139,101,199,0.3)',
             },
           ]}
         />

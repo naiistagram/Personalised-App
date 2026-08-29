@@ -2,9 +2,16 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 import { GlassSurface } from '@/components/GlassSurface';
 import { colors, fonts, gradients, radii, spacing } from '@/theme/theme';
+
+const SQUISH_SPRING = { damping: 14, stiffness: 260, mass: 0.6 };
 
 type GlassPillProps = {
   label: string;
@@ -38,6 +45,24 @@ export function GlassPill({
   fullWidth,
 }: GlassPillProps) {
   const dims = sizeMap[size];
+  const scale = useSharedValue(1);
+  const glow = useSharedValue(0);
+
+  const squishStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glow.value,
+  }));
+
+  const pressIn = () => {
+    scale.value = withSpring(0.94, SQUISH_SPRING);
+    glow.value = withSpring(1, SQUISH_SPRING);
+  };
+  const pressOut = () => {
+    scale.value = withSpring(1, SQUISH_SPRING);
+    glow.value = withSpring(0, SQUISH_SPRING);
+  };
 
   const content = (
     <View style={[styles.row, { paddingVertical: dims.paddingVertical, paddingHorizontal: dims.paddingHorizontal }]}>
@@ -56,31 +81,40 @@ export function GlassPill({
   return (
     <Pressable
       disabled={disabled}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
       onPress={() => {
         tap();
         onPress?.();
-      }}
-      style={({ pressed }) => [
-        { opacity: disabled ? 0.5 : pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-        fullWidth && { alignSelf: 'stretch' },
-      ]}>
-      {variant === 'filled' ? (
-        <View style={[styles.pillShape, shadowGlow]}>
-          <LinearGradient
-            colors={gradients.hero}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-          {content}
-        </View>
-      ) : variant === 'glass' ? (
-        <GlassSurface radius={radii.pill} elevated={false}>
-          {content}
-        </GlassSurface>
-      ) : (
-        <View style={styles.pillShape}>{content}</View>
-      )}
+      }}>
+      <Animated.View
+        style={[
+          squishStyle,
+          { opacity: disabled ? 0.5 : 1 },
+          fullWidth && { alignSelf: 'stretch' },
+        ]}>
+        {variant === 'filled' ? (
+          <View style={[styles.pillShape, shadowGlow]}>
+            <LinearGradient
+              colors={gradients.hero}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.pressGlowLight, glowStyle]} />
+            {content}
+          </View>
+        ) : variant === 'glass' ? (
+          <View style={styles.pillShape}>
+            <GlassSurface radius={radii.pill} elevated={false}>
+              {content}
+            </GlassSurface>
+            <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.pressGlowDark, glowStyle]} />
+          </View>
+        ) : (
+          <View style={styles.pillShape}>{content}</View>
+        )}
+      </Animated.View>
     </Pressable>
   );
 }
@@ -97,6 +131,12 @@ const styles = StyleSheet.create({
   pillShape: {
     borderRadius: radii.pill,
     overflow: 'hidden',
+  },
+  pressGlowLight: {
+    backgroundColor: 'rgba(255,255,255,0.28)',
+  },
+  pressGlowDark: {
+    backgroundColor: 'rgba(255,255,255,0.4)',
   },
   row: {
     flexDirection: 'row',
