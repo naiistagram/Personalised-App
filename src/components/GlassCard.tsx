@@ -8,11 +8,12 @@ type GlassCardProps = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
   padding?: number;
   radius?: number;
+  background?: string;
 }>;
 
-export function GlassCard({ children, style, padding = spacing.md, radius = radii.lg }: GlassCardProps) {
+export function GlassCard({ children, style, padding = spacing.md, radius = radii.lg, background }: GlassCardProps) {
   return (
-    <GlassSurface radius={radius} style={style}>
+    <GlassSurface radius={radius} background={background} style={style}>
       <View style={[styles.inner, { padding, borderRadius: radius }]}>{children}</View>
     </GlassSurface>
   );

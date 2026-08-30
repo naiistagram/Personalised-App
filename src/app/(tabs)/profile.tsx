@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Alert, Platform, StyleSheet, Switch, Text, View } from 'react-native';
 
@@ -122,16 +121,13 @@ export default function ProfileScreen() {
             return (
               <View key={key} style={styles.reminderRow}>
                 <View style={{ flex: 1 }}>
-                  <View style={styles.reminderLabelRow}>
-                    <Ionicons name={copy.icon as any} size={16} color={colors.text} />
-                    <Text style={styles.reminderLabel}>{copy.label}</Text>
-                  </View>
+                  <Text style={styles.reminderLabel}>{copy.label}</Text>
                   <Text style={styles.reminderDescription}>{copy.description}</Text>
                   {setting.enabled && (
                     <View style={styles.timeAdjustRow}>
-                      <GlassPill label="-15m" size="sm" variant="ghost" onPress={() => bump(key, -15)} />
+                      <GlassPill label="-15m" size="sm" variant="soft" onPress={() => bump(key, -15)} />
                       <Text style={styles.timeText}>{formatTime(setting.hour, setting.minute)}</Text>
-                      <GlassPill label="+15m" size="sm" variant="ghost" onPress={() => bump(key, 15)} />
+                      <GlassPill label="+15m" size="sm" variant="soft" onPress={() => bump(key, 15)} />
                     </View>
                   )}
                 </View>
@@ -154,6 +150,7 @@ export default function ProfileScreen() {
           <GlassPill
             label="Send test notification"
             size="sm"
+            variant="soft"
             onPress={async () => {
               const granted = await requestNotificationPermission();
               if (!granted) {
@@ -186,11 +183,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: spacing.sm,
-  },
-  reminderLabelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
   },
   reminderLabel: {
     fontFamily: fonts.bodyBold,

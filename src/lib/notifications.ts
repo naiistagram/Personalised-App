@@ -23,7 +23,7 @@ export async function ensureAndroidChannel() {
     importance: Notifications.AndroidImportance.HIGH,
     sound: 'default',
     vibrationPattern: [0, 180, 90, 180],
-    lightColor: '#111110',
+    lightColor: '#5B9BEA',
   });
 }
 
