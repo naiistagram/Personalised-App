@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import { ScrollView, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { CloudBackground } from '@/components/CloudBackground';
+import { PhotoBackground } from '@/components/PhotoBackground';
 import { spacing } from '@/theme/theme';
 
 type ScreenProps = PropsWithChildren<{
@@ -19,7 +19,7 @@ export function Screen({ children, contentStyle, scroll = true }: ScreenProps) {
   };
 
   return (
-    <CloudBackground>
+    <PhotoBackground>
       {scroll ? (
         <ScrollView
           contentContainerStyle={[padding, styles.content, contentStyle]}
@@ -29,7 +29,7 @@ export function Screen({ children, contentStyle, scroll = true }: ScreenProps) {
       ) : (
         <>{children}</>
       )}
-    </CloudBackground>
+    </PhotoBackground>
   );
 }
 

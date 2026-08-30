@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -46,7 +47,7 @@ export default function TodayScreen() {
 
   return (
     <Screen>
-      <ScreenHeader eyebrow="Today" title={`${greeting()}${name} ☁️`} subtitle="Here's your soft landing for today." />
+      <ScreenHeader eyebrow="Today" title={`${greeting()}${name}`} subtitle="Here's what's on today." />
 
       {affirmation && (
         <GlassCard>
@@ -68,9 +69,10 @@ export default function TodayScreen() {
 
       <GlassCard>
         <Text style={styles.cardLabel}>Continue learning</Text>
-        <Text style={styles.lessonTitle}>
-          {topicMeta[nextLesson.topic].emoji} {nextLesson.title}
-        </Text>
+        <View style={styles.lessonTitleRow}>
+          <Ionicons name={topicMeta[nextLesson.topic].icon as any} size={20} color={colors.text} />
+          <Text style={styles.lessonTitle}>{nextLesson.title}</Text>
+        </View>
         <Text style={styles.lessonMeta}>{topicMeta[nextLesson.topic].label} · {nextLesson.estMinutes} min</Text>
         <View style={{ marginTop: spacing.sm, alignSelf: 'flex-start' }}>
           <GlassPill
@@ -104,8 +106,18 @@ export default function TodayScreen() {
       </GlassCard>
 
       <View style={styles.row}>
-        <GlassPill label="🌙 Journal" onPress={() => router.push('/(tabs)/manifest')} fullWidth />
-        <GlassPill label="🧘‍♀️ Meditate" onPress={() => router.push('/(tabs)/profile')} fullWidth />
+        <GlassPill
+          label="Journal"
+          icon={<Ionicons name="create-outline" size={16} color={colors.text} />}
+          onPress={() => router.push('/(tabs)/manifest')}
+          fullWidth
+        />
+        <GlassPill
+          label="Meditate"
+          icon={<Ionicons name="leaf-outline" size={16} color={colors.text} />}
+          onPress={() => router.push('/(tabs)/profile')}
+          fullWidth
+        />
       </View>
     </Screen>
   );
@@ -145,6 +157,11 @@ const styles = StyleSheet.create({
     color: colors.textSoft,
     textAlign: 'center',
     marginTop: 2,
+  },
+  lessonTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   lessonTitle: {
     fontFamily: fonts.heading,

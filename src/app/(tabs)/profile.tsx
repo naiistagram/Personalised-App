@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Alert, Platform, StyleSheet, Switch, Text, View } from 'react-native';
 
@@ -97,7 +98,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen>
-      <ScreenHeader eyebrow="You" title="Your space 🌸" subtitle="Make it feel like you." />
+      <ScreenHeader eyebrow="You" title="Your space" subtitle="Make it feel like you." />
 
       <GlassCard>
         <Text style={styles.cardLabel}>What should we call you?</Text>
@@ -121,9 +122,10 @@ export default function ProfileScreen() {
             return (
               <View key={key} style={styles.reminderRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.reminderLabel}>
-                    {copy.emoji} {copy.label}
-                  </Text>
+                  <View style={styles.reminderLabelRow}>
+                    <Ionicons name={copy.icon as any} size={16} color={colors.text} />
+                    <Text style={styles.reminderLabel}>{copy.label}</Text>
+                  </View>
                   <Text style={styles.reminderDescription}>{copy.description}</Text>
                   {setting.enabled && (
                     <View style={styles.timeAdjustRow}>
@@ -184,6 +186,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: spacing.sm,
+  },
+  reminderLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   reminderLabel: {
     fontFamily: fonts.bodyBold,

@@ -7,16 +7,18 @@
     "icon": "./assets/icon.png",
     "scheme": "cloud",
     "userInterfaceStyle": "light",
-    "backgroundColor": "#F2E9FF",
+    "backgroundColor": "#FAFAF9",
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#F2E9FF",
+        "backgroundColor": "#FAFAF9",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -25,14 +27,20 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "output": "single"
+      "output": "single",
+      "name": "Cloud",
+      "shortName": "Cloud",
+      "description": "A learning, planner & manifestation app.",
+      "themeColor": "#111110",
+      "backgroundColor": "#FAFAF9",
+      "display": "standalone"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#F2E9FF",
+          "backgroundColor": "#FAFAF9",
           "image": "./assets/splash-icon.png",
           "imageWidth": 140
         }
@@ -41,7 +49,7 @@
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#C9A6FF"
+          "color": "#111110"
         }
       ]
     ],

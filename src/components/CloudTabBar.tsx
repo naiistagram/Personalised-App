@@ -1,18 +1,18 @@
-import type { BottomTabBarProps } from 'expo-router/js-tabs';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GlassSurface } from '@/components/GlassSurface';
-import { colors, fonts, gradients, radii, spacing } from '@/theme/theme';
+import { colors, fonts, radii, spacing } from '@/theme/theme';
 
-const TAB_ICONS: Record<string, string> = {
-  index: '☁️',
-  learn: '📖',
-  planner: '🗓️',
-  manifest: '🌙',
-  profile: '🌸',
+const TAB_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+  index: 'sunny-outline',
+  learn: 'book-outline',
+  planner: 'calendar-outline',
+  manifest: 'sparkles-outline',
+  profile: 'person-outline',
 };
 
 export function CloudTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -43,21 +43,18 @@ export function CloudTabBar({ state, descriptors, navigation }: BottomTabBarProp
                 onPress={onPress}
                 accessibilityRole="button"
                 accessibilityState={focused ? { selected: true } : {}}
-                style={styles.tabButton}>
+                style={focused ? styles.tabButtonActive : styles.tabButton}>
                 {focused ? (
                   <View style={styles.activePillWrap}>
-                    <LinearGradient
-                      colors={gradients.hero}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.activePill}
-                    />
-                    <Text style={styles.icon}>{TAB_ICONS[route.name] ?? '•'}</Text>
-                    <Text style={[styles.label, styles.labelActive]}>{label}</Text>
+                    <View style={styles.activePill} />
+                    <Ionicons name={TAB_ICONS[route.name] ?? 'ellipse-outline'} size={16} color={colors.textOnDark} />
+                    <Text style={[styles.label, styles.labelActive]} numberOfLines={1}>
+                      {label}
+                    </Text>
                   </View>
                 ) : (
                   <View style={styles.inactivePill}>
-                    <Text style={styles.icon}>{TAB_ICONS[route.name] ?? '•'}</Text>
+                    <Ionicons name={TAB_ICONS[route.name] ?? 'ellipse-outline'} size={20} color={colors.textSoft} />
                   </View>
                 )}
               </Pressable>
@@ -79,6 +76,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.xs,
     gap: 4,
@@ -86,6 +84,10 @@ const styles = StyleSheet.create({
   tabButton: {
     flexGrow: 1,
     flexBasis: 0,
+    alignItems: 'center',
+  },
+  tabButtonActive: {
+    flexShrink: 0,
   },
   activePillWrap: {
     flexDirection: 'row',
@@ -95,19 +97,16 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
-    overflow: 'hidden',
   },
   activePill: {
-    ...StyleSheet.absoluteFill,
+    ...StyleSheet.absoluteFillObject,
     borderRadius: radii.pill,
+    backgroundColor: colors.accent,
   },
   inactivePill: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing.xs,
-  },
-  icon: {
-    fontSize: 18,
   },
   label: {
     fontFamily: fonts.bodyBold,

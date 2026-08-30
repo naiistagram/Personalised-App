@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { PropsWithChildren } from 'react';
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { colors, radii, shadow } from '@/theme/theme';
+import { colors, gradients, radii, shadow } from '@/theme/theme';
 
 type GlassSurfaceProps = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
@@ -22,8 +22,8 @@ export function GlassSurface({
   children,
   style,
   radius = radii.lg,
-  intensity = 40,
-  tint = 'light',
+  intensity = 70,
+  tint = 'default',
   bordered = true,
   elevated = true,
 }: GlassSurfaceProps) {
@@ -46,7 +46,7 @@ export function GlassSurface({
         ]}
       />
       <LinearGradient
-        colors={['rgba(255,255,255,0.55)', 'rgba(255,255,255,0)']}
+        colors={gradients.glassSheen}
         start={{ x: 0.1, y: 0 }}
         end={{ x: 0.9, y: 0.6 }}
         style={StyleSheet.absoluteFill}

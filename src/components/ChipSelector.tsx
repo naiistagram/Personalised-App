@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: spacing.sm,
     borderRadius: radii.pill,
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: colors.chipInactive,
     borderWidth: 1,
     borderColor: colors.border,
   },

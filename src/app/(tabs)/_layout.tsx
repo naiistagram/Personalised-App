@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router/js-tabs';
+import { Tabs } from 'expo-router';
 
 import { CloudTabBar } from '@/components/CloudTabBar';
 

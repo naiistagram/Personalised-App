@@ -1,15 +1,16 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { CloudBackground } from '@/components/CloudBackground';
 import { GlassCard } from '@/components/GlassCard';
 import { GlassPill } from '@/components/GlassPill';
+import { PhotoBackground } from '@/components/PhotoBackground';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { learningLibrary, lessonsByTopic, topicOrder, type Lesson } from '@/data/learningLibrary';
 import { useLearningStore } from '@/store/useLearningStore';
-import { colors, fonts, radii, spacing, topicMeta } from '@/theme/theme';
+import { backgrounds, colors, fonts, radii, spacing, topicMeta } from '@/theme/theme';
 
 export default function LearnScreen() {
   const params = useLocalSearchParams<{ lessonId?: string }>();
@@ -28,7 +29,7 @@ export default function LearnScreen() {
     <Screen>
       <ScreenHeader
         eyebrow="Learn"
-        title="Bite-sized growth 🌱"
+        title="Bite-sized growth"
         subtitle={`${streak} day streak · ${Object.keys(completedCardIds).length} ideas learned`}
       />
 
@@ -37,9 +38,10 @@ export default function LearnScreen() {
         const meta = topicMeta[topic];
         return (
           <View key={topic} style={{ gap: spacing.sm }}>
-            <Text style={styles.topicHeading}>
-              {meta.emoji} {meta.label}
-            </Text>
+            <View style={styles.topicHeadingRow}>
+              <Ionicons name={meta.icon as any} size={18} color={colors.text} />
+              <Text style={styles.topicHeading}>{meta.label}</Text>
+            </View>
             <View style={{ gap: spacing.sm }}>
               {lessons.map((lesson) => {
                 const done = lesson.cards.every((c) => completedCardIds[c.id]);
@@ -95,7 +97,7 @@ function LessonReader({ lesson, onClose }: { lesson: Lesson | null; onClose: () 
 
   return (
     <Modal visible={Boolean(lesson)} animationType="slide" transparent onRequestClose={onClose}>
-      <CloudBackground>
+      <PhotoBackground photo={backgrounds.reading}>
         <View style={styles.readerContainer}>
           <View style={styles.readerTopBar}>
             <View style={styles.dotsRow}>
@@ -115,9 +117,10 @@ function LessonReader({ lesson, onClose }: { lesson: Lesson | null; onClose: () 
           {lesson && card && meta && (
             <Pressable style={styles.readerCardWrap} onPress={advance}>
               <GlassCard style={{ minHeight: 320 }} padding={spacing.lg}>
-                <Text style={styles.readerTopic}>
-                  {meta.emoji} {meta.label}
-                </Text>
+                <View style={styles.readerTopicRow}>
+                  <Ionicons name={meta.icon as any} size={14} color={colors.accent} />
+                  <Text style={styles.readerTopic}>{meta.label}</Text>
+                </View>
                 <Text style={styles.readerHeading}>{card.heading}</Text>
                 <Text style={styles.readerBody}>{card.body}</Text>
               </GlassCard>
@@ -129,12 +132,17 @@ function LessonReader({ lesson, onClose }: { lesson: Lesson | null; onClose: () 
             <GlassPill label={isLast ? 'Finish lesson' : 'Next idea →'} variant="filled" onPress={advance} />
           </View>
         </View>
-      </CloudBackground>
+      </PhotoBackground>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  topicHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   topicHeading: {
     fontFamily: fonts.heading,
     fontSize: 18,
@@ -186,7 +194,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
   },
   dotActive: {
-    backgroundColor: colors.accentAlt,
+    backgroundColor: colors.accent,
   },
   dotInactive: {
     backgroundColor: 'rgba(255,255,255,0.5)',
@@ -195,13 +203,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  readerTopicRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: spacing.sm,
+  },
   readerTopic: {
     fontFamily: fonts.bodyBold,
     fontSize: 12,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     color: colors.accent,
-    marginBottom: spacing.sm,
   },
   readerHeading: {
     fontFamily: fonts.display,

@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -12,9 +13,9 @@ import { useManifestStore, type EntryType } from '@/store/useManifestStore';
 import { colors, fonts, spacing } from '@/theme/theme';
 
 const typeOptions: { value: EntryType; label: string }[] = [
-  { value: 'manifestation', label: '✨ Manifest' },
-  { value: 'journal', label: '📔 Journal' },
-  { value: 'work-note', label: '🗒️ Work note' },
+  { value: 'manifestation', label: 'Manifest' },
+  { value: 'journal', label: 'Journal' },
+  { value: 'work-note', label: 'Work note' },
 ];
 
 const affirmationCategories: { value: AffirmationCategory; label: string }[] = [
@@ -80,7 +81,7 @@ export default function ManifestScreen() {
 
   return (
     <Screen>
-      <ScreenHeader eyebrow="Manifest" title="Write it into being 🌙" subtitle="Journal, manifest, plan your words." />
+      <ScreenHeader eyebrow="Manifest" title="Write it into being" subtitle="Journal, manifest, plan your words." />
 
       <GlassCard>
         <Text style={styles.cardLabel}>New entry</Text>
@@ -151,11 +152,11 @@ export default function ManifestScreen() {
               <Text style={styles.affirmationText}>{a.text}</Text>
               <View style={styles.affirmationActions}>
                 <Pressable onPress={() => toggleFavoriteAffirmation(a.id)}>
-                  <Text style={styles.starText}>{a.isFavorite ? '★' : '☆'}</Text>
+                  <Ionicons name={a.isFavorite ? 'star' : 'star-outline'} size={18} color={colors.accent} />
                 </Pressable>
                 {a.custom && (
                   <Pressable onPress={() => removeAffirmation(a.id)}>
-                    <Text style={styles.removeText}>✕</Text>
+                    <Ionicons name="close" size={18} color={colors.textSoft} />
                   </Pressable>
                 )}
               </View>
@@ -230,9 +231,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-  },
-  starText: {
-    fontSize: 18,
-    color: colors.accentAlt,
   },
 });

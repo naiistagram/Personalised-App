@@ -31,26 +31,26 @@ export const defaultReminders: ReminderSettings = {
   eveningJournal: { enabled: false, hour: 21, minute: 30 },
 };
 
-export const reminderCopy: Record<ReminderKey, { label: string; description: string; emoji: string }> = {
+export const reminderCopy: Record<ReminderKey, { label: string; description: string; icon: string }> = {
   morningAffirmation: {
     label: 'Morning affirmation',
     description: 'Start the day with a belief tailored to you.',
-    emoji: '🌸',
+    icon: 'sunny-outline',
   },
   learningNudge: {
     label: 'Learn something bite-sized',
     description: 'Selling, marketing, copywriting & lead gen, rotated daily.',
-    emoji: '📖',
+    icon: 'book-outline',
   },
   meditation: {
     label: 'Meditate / pray',
     description: 'A gentle nudge to breathe, ground, and reconnect.',
-    emoji: '🧘‍♀️',
+    icon: 'leaf-outline',
   },
   eveningJournal: {
     label: 'Evening journal',
     description: 'Reflect, plan tomorrow, or free-write.',
-    emoji: '🌙',
+    icon: 'moon-outline',
   },
 };
 

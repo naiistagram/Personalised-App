@@ -11,9 +11,9 @@ import { usePlannerStore, type PlannerCategory } from '@/store/usePlannerStore';
 import { colors, fonts, spacing } from '@/theme/theme';
 
 const categoryOptions: { value: PlannerCategory; label: string }[] = [
-  { value: 'work', label: '💼 Work' },
-  { value: 'goal', label: '🎯 Goal' },
-  { value: 'personal', label: '🫧 Personal' },
+  { value: 'work', label: 'Work' },
+  { value: 'goal', label: 'Goal' },
+  { value: 'personal', label: 'Personal' },
 ];
 
 const dueOptions: { value: 'none' | 'today' | 'tomorrow'; label: string }[] = [
@@ -65,7 +65,7 @@ export default function PlannerScreen() {
 
   return (
     <Screen>
-      <ScreenHeader eyebrow="Planner" title="Plan the work 🗓️" subtitle="Work, goals, and everything in between." />
+      <ScreenHeader eyebrow="Planner" title="Plan the work" subtitle="Work, goals, and everything in between." />
 
       <GlassCard>
         <Text style={styles.cardLabel}>Add a task</Text>
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   progressFill: {
     height: '100%',
     borderRadius: 999,
-    backgroundColor: colors.accentAlt,
+    backgroundColor: colors.accent,
   },
   goalActionsRow: {
     flexDirection: 'row',

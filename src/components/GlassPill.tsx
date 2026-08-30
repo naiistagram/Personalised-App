@@ -1,10 +1,9 @@
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { GlassSurface } from '@/components/GlassSurface';
-import { colors, fonts, gradients, radii, spacing } from '@/theme/theme';
+import { colors, fonts, radii, spacing } from '@/theme/theme';
 
 type GlassPillProps = {
   label: string;
@@ -65,15 +64,9 @@ export function GlassPill({
         fullWidth && { alignSelf: 'stretch' },
       ]}>
       {variant === 'filled' ? (
-        <View style={[styles.pillShape, shadowGlow]}>
-          <LinearGradient
-            colors={gradients.hero}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-          {content}
-        </View>
+        <GlassSurface radius={radii.pill} elevated={false} bordered={false}>
+          <View style={styles.outlineBorder}>{content}</View>
+        </GlassSurface>
       ) : variant === 'glass' ? (
         <GlassSurface radius={radii.pill} elevated={false}>
           {content}
@@ -85,18 +78,15 @@ export function GlassPill({
   );
 }
 
-const shadowGlow = {
-  shadowColor: colors.accentAlt,
-  shadowOffset: { width: 0, height: 6 },
-  shadowOpacity: 0.35,
-  shadowRadius: 14,
-  elevation: 6,
-};
-
 const styles = StyleSheet.create({
   pillShape: {
     borderRadius: radii.pill,
     overflow: 'hidden',
+  },
+  outlineBorder: {
+    borderRadius: radii.pill,
+    borderWidth: 1.5,
+    borderColor: 'rgba(17,17,16,0.55)',
   },
   row: {
     flexDirection: 'row',
@@ -109,7 +99,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   labelOnFilled: {
-    color: colors.textOnDark,
+    color: colors.text,
   },
   labelOnGlass: {
     color: colors.text,
