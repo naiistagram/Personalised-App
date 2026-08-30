@@ -1,11 +1,12 @@
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GlassSurface } from '@/components/GlassSurface';
-import { colors, fonts, radii, spacing } from '@/theme/theme';
+import { colors, gradients, radii, shadow, spacing } from '@/theme/theme';
 
 const TAB_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   index: 'sunny-outline',
@@ -20,11 +21,9 @@ export function CloudTabBar({ state, descriptors, navigation }: BottomTabBarProp
 
   return (
     <View pointerEvents="box-none" style={[styles.wrapper, { bottom: insets.bottom + spacing.sm }]}>
-      <GlassSurface radius={radii.pill} intensity={55}>
+      <GlassSurface radius={radii.xl} blur elevated={false} background="rgba(255,255,255,0.85)" style={shadow.tabBar}>
         <View style={styles.row}>
           {state.routes.map((route, index) => {
-            const { options } = descriptors[route.key];
-            const label = (options.title ?? route.name) as string;
             const focused = state.index === index;
 
             const onPress = () => {
@@ -43,19 +42,13 @@ export function CloudTabBar({ state, descriptors, navigation }: BottomTabBarProp
                 onPress={onPress}
                 accessibilityRole="button"
                 accessibilityState={focused ? { selected: true } : {}}
-                style={focused ? styles.tabButtonActive : styles.tabButton}>
+                style={styles.tabButton}>
                 {focused ? (
-                  <View style={styles.activePillWrap}>
-                    <View style={styles.activePill} />
-                    <Ionicons name={TAB_ICONS[route.name] ?? 'ellipse-outline'} size={16} color={colors.textOnDark} />
-                    <Text style={[styles.label, styles.labelActive]} numberOfLines={1}>
-                      {label}
-                    </Text>
-                  </View>
+                  <LinearGradient colors={gradients.hero} style={styles.tabButtonFill}>
+                    <Ionicons name={TAB_ICONS[route.name] ?? 'ellipse-outline'} size={20} color={colors.textOnDark} />
+                  </LinearGradient>
                 ) : (
-                  <View style={styles.inactivePill}>
-                    <Ionicons name={TAB_ICONS[route.name] ?? 'ellipse-outline'} size={20} color={colors.textSoft} />
-                  </View>
+                  <Ionicons name={TAB_ICONS[route.name] ?? 'ellipse-outline'} size={20} color={colors.textSoft} />
                 )}
               </Pressable>
             );
@@ -65,6 +58,8 @@ export function CloudTabBar({ state, descriptors, navigation }: BottomTabBarProp
     </View>
   );
 }
+
+const TAB_SIZE = 46;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -76,44 +71,22 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.xs,
-    gap: 4,
   },
   tabButton: {
-    flexGrow: 1,
-    flexBasis: 0,
-    alignItems: 'center',
-  },
-  tabButtonActive: {
-    flexShrink: 0,
-  },
-  activePillWrap: {
-    flexDirection: 'row',
+    width: TAB_SIZE,
+    height: TAB_SIZE,
+    borderRadius: TAB_SIZE / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
   },
-  activePill: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: radii.pill,
-    backgroundColor: colors.accent,
-  },
-  inactivePill: {
+  tabButtonFill: {
+    width: TAB_SIZE,
+    height: TAB_SIZE,
+    borderRadius: TAB_SIZE / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.xs,
-  },
-  label: {
-    fontFamily: fonts.bodyBold,
-    fontSize: 12,
-    color: colors.text,
-  },
-  labelActive: {
-    color: colors.textOnDark,
   },
 });

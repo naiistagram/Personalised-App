@@ -1,9 +1,8 @@
 import { PropsWithChildren } from 'react';
-import { ScrollView, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { PhotoBackground } from '@/components/PhotoBackground';
-import { spacing } from '@/theme/theme';
+import { colors, spacing } from '@/theme/theme';
 
 type ScreenProps = PropsWithChildren<{
   contentStyle?: StyleProp<ViewStyle>;
@@ -19,7 +18,7 @@ export function Screen({ children, contentStyle, scroll = true }: ScreenProps) {
   };
 
   return (
-    <PhotoBackground>
+    <View style={styles.fill}>
       {scroll ? (
         <ScrollView
           contentContainerStyle={[padding, styles.content, contentStyle]}
@@ -29,11 +28,15 @@ export function Screen({ children, contentStyle, scroll = true }: ScreenProps) {
       ) : (
         <>{children}</>
       )}
-    </PhotoBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   content: {
     gap: spacing.md,
   },

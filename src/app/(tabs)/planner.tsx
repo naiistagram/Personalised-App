@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -8,7 +9,7 @@ import { GlassPill } from '@/components/GlassPill';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { usePlannerStore, type PlannerCategory } from '@/store/usePlannerStore';
-import { colors, fonts, spacing } from '@/theme/theme';
+import { colors, fonts, gradients, spacing } from '@/theme/theme';
 
 const categoryOptions: { value: PlannerCategory; label: string }[] = [
   { value: 'work', label: 'Work' },
@@ -118,7 +119,7 @@ export default function PlannerScreen() {
       <GlassCard>
         <View style={styles.goalHeaderRow}>
           <Text style={styles.cardLabel}>Goals</Text>
-          <GlassPill label={showGoalForm ? 'Cancel' : '+ Goal'} size="sm" onPress={() => setShowGoalForm((v) => !v)} />
+          <GlassPill label={showGoalForm ? 'Cancel' : '+ Goal'} size="sm" variant="ghost" onPress={() => setShowGoalForm((v) => !v)} />
         </View>
 
         {showGoalForm && (
@@ -136,13 +137,18 @@ export default function PlannerScreen() {
               <View key={goal.id}>
                 <Text style={styles.taskTitle}>{goal.title}</Text>
                 <View style={styles.progressTrack}>
-                  <View style={[styles.progressFill, { width: `${goal.progress}%` }]} />
+                  <LinearGradient
+                    colors={gradients.progress}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.progressFill, { width: `${goal.progress}%` }]}
+                  />
                 </View>
                 <View style={styles.goalActionsRow}>
                   <Text style={styles.taskMeta}>{goal.progress}% there</Text>
                   <View style={styles.goalButtons}>
-                    <GlassPill label="-10%" size="sm" variant="ghost" onPress={() => updateGoalProgress(goal.id, goal.progress - 10)} />
-                    <GlassPill label="+10%" size="sm" variant="ghost" onPress={() => updateGoalProgress(goal.id, goal.progress + 10)} />
+                    <GlassPill label="-10%" size="sm" variant="soft" onPress={() => updateGoalProgress(goal.id, goal.progress - 10)} />
+                    <GlassPill label="+10%" size="sm" variant="soft" onPress={() => updateGoalProgress(goal.id, goal.progress + 10)} />
                   </View>
                 </View>
               </View>
@@ -213,14 +219,13 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 8,
     borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: colors.trackBackground,
     marginTop: 6,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
     borderRadius: 999,
-    backgroundColor: colors.accent,
   },
   goalActionsRow: {
     flexDirection: 'row',

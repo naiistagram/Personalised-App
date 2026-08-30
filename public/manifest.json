@@ -4,8 +4,8 @@
   "description": "A learning, planner & manifestation app.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAFAF9",
-  "theme_color": "#111110",
+  "background_color": "#F6F9FD",
+  "theme_color": "#5B9BEA",
   "icons": [
     {
       "src": "/icon-192.png",

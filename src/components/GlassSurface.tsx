@@ -1,56 +1,49 @@
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import { PropsWithChildren } from 'react';
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { colors, gradients, radii, shadow } from '@/theme/theme';
+import { colors, radii, shadow } from '@/theme/theme';
 
 type GlassSurfaceProps = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
   radius?: number;
   intensity?: number;
-  tint?: 'light' | 'dark' | 'default';
+  background?: string;
+  blur?: boolean;
   bordered?: boolean;
   elevated?: boolean;
 }>;
 
 /**
- * The core "liquid glass" building block: a frosted, translucent surface with
- * a soft sheen highlight along the top edge, used for cards, pills and sheets.
+ * The core surface building block: a flat, softly-shadowed card by default.
+ * Passing `blur` opts into a frosted/translucent treatment (used only for
+ * the floating tab bar in this design).
  */
 export function GlassSurface({
   children,
   style,
   radius = radii.lg,
-  intensity = 70,
-  tint = 'default',
-  bordered = true,
+  intensity = 40,
+  background = colors.textOnDark,
+  blur = false,
+  bordered = false,
   elevated = true,
 }: GlassSurfaceProps) {
   return (
     <View
       style={[
         { borderRadius: radius, overflow: 'hidden' },
-        elevated && shadow.soft,
+        elevated && shadow.card,
         style,
       ]}>
-      <BlurView
-        intensity={Platform.OS === 'web' ? intensity * 0.6 : intensity}
-        tint={tint}
-        style={StyleSheet.absoluteFill}
-      />
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: colors.glass },
-        ]}
-      />
-      <LinearGradient
-        colors={gradients.glassSheen}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 0.9, y: 0.6 }}
-        style={StyleSheet.absoluteFill}
-      />
+      {blur && (
+        <BlurView
+          intensity={Platform.OS === 'web' ? intensity * 0.6 : intensity}
+          tint="light"
+          style={StyleSheet.absoluteFill}
+        />
+      )}
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: background }]} />
       {bordered && (
         <View
           pointerEvents="none"

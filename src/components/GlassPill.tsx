@@ -1,15 +1,16 @@
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { GlassSurface } from '@/components/GlassSurface';
-import { colors, fonts, radii, spacing } from '@/theme/theme';
+import { colors, fonts, gradients, radii, spacing } from '@/theme/theme';
 
 type GlassPillProps = {
   label: string;
   onPress?: () => void;
   icon?: ReactNode;
-  variant?: 'filled' | 'glass' | 'ghost';
+  variant?: 'filled' | 'outline' | 'soft' | 'ghost';
+  onDark?: boolean;
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   fullWidth?: boolean;
@@ -31,24 +32,29 @@ export function GlassPill({
   label,
   onPress,
   icon,
-  variant = 'glass',
+  variant = 'soft',
+  onDark = false,
   size = 'md',
   disabled,
   fullWidth,
 }: GlassPillProps) {
   const dims = sizeMap[size];
 
+  const labelColor =
+    variant === 'filled'
+      ? colors.textOnDark
+      : variant === 'ghost'
+        ? onDark
+          ? colors.textOnDark
+          : colors.accent
+        : variant === 'soft'
+          ? colors.chipInactiveText
+          : colors.accent;
+
   const content = (
     <View style={[styles.row, { paddingVertical: dims.paddingVertical, paddingHorizontal: dims.paddingHorizontal }]}>
       {icon}
-      <Text
-        style={[
-          styles.label,
-          { fontSize: dims.fontSize },
-          variant === 'filled' ? styles.labelOnFilled : styles.labelOnGlass,
-        ]}>
-        {label}
-      </Text>
+      <Text style={[styles.label, { fontSize: dims.fontSize, color: labelColor }]}>{label}</Text>
     </View>
   );
 
@@ -64,15 +70,15 @@ export function GlassPill({
         fullWidth && { alignSelf: 'stretch' },
       ]}>
       {variant === 'filled' ? (
-        <GlassSurface radius={radii.pill} elevated={false} bordered={false}>
-          <View style={styles.outlineBorder}>{content}</View>
-        </GlassSurface>
-      ) : variant === 'glass' ? (
-        <GlassSurface radius={radii.pill} elevated={false}>
+        <LinearGradient colors={gradients.hero} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.pillShape}>
           {content}
-        </GlassSurface>
+        </LinearGradient>
+      ) : variant === 'outline' ? (
+        <View style={[styles.pillShape, styles.outlineBorder]}>{content}</View>
+      ) : variant === 'soft' ? (
+        <View style={[styles.pillShape, styles.softFill]}>{content}</View>
       ) : (
-        <View style={styles.pillShape}>{content}</View>
+        <View style={[styles.pillShape, onDark && styles.ghostOnDarkFill]}>{content}</View>
       )}
     </Pressable>
   );
@@ -84,9 +90,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   outlineBorder: {
-    borderRadius: radii.pill,
+    backgroundColor: colors.textOnDark,
     borderWidth: 1.5,
-    borderColor: 'rgba(17,17,16,0.55)',
+    borderColor: colors.border,
+  },
+  softFill: {
+    backgroundColor: colors.chipInactive,
+  },
+  ghostOnDarkFill: {
+    backgroundColor: 'rgba(255,255,255,0.3)',
   },
   row: {
     flexDirection: 'row',
@@ -97,11 +109,5 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: fonts.bodyBold,
     letterSpacing: 0.2,
-  },
-  labelOnFilled: {
-    color: colors.text,
-  },
-  labelOnGlass: {
-    color: colors.text,
   },
 });

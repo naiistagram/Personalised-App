@@ -10,7 +10,12 @@ type GlassInputProps = TextInputProps & {
 
 export function GlassInput({ containerStyle, inputStyle, ...props }: GlassInputProps) {
   return (
-    <GlassSurface radius={radii.md} elevated={false} style={containerStyle}>
+    <GlassSurface
+      radius={radii.input}
+      background={colors.inputBackground}
+      bordered
+      elevated={false}
+      style={containerStyle}>
       <View style={styles.wrap}>
         <TextInput
           placeholderTextColor={colors.textSoft}

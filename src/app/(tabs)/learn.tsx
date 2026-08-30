@@ -1,16 +1,16 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 import { GlassCard } from '@/components/GlassCard';
 import { GlassPill } from '@/components/GlassPill';
-import { PhotoBackground } from '@/components/PhotoBackground';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { learningLibrary, lessonsByTopic, topicOrder, type Lesson } from '@/data/learningLibrary';
 import { useLearningStore } from '@/store/useLearningStore';
-import { backgrounds, colors, fonts, radii, spacing, topicMeta } from '@/theme/theme';
+import { colors, fonts, gradients, radii, spacing, topicMeta } from '@/theme/theme';
 
 export default function LearnScreen() {
   const params = useLocalSearchParams<{ lessonId?: string }>();
@@ -39,7 +39,7 @@ export default function LearnScreen() {
         return (
           <View key={topic} style={{ gap: spacing.sm }}>
             <View style={styles.topicHeadingRow}>
-              <Ionicons name={meta.icon as any} size={18} color={colors.text} />
+              <View style={[styles.topicDot, { backgroundColor: meta.dot }]} />
               <Text style={styles.topicHeading}>{meta.label}</Text>
             </View>
             <View style={{ gap: spacing.sm }}>
@@ -48,15 +48,17 @@ export default function LearnScreen() {
                 const started = lesson.cards.some((c) => completedCardIds[c.id]);
                 return (
                   <Pressable key={lesson.id} onPress={() => setActiveLesson(lesson)}>
-                    <GlassCard>
+                    <GlassCard background={meta.bg}>
                       <View style={styles.lessonRow}>
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.lessonTitle}>{lesson.title}</Text>
-                          <Text style={styles.lessonMeta}>
+                          <Text style={[styles.lessonTitle, { color: meta.text }]}>{lesson.title}</Text>
+                          <Text style={[styles.lessonMeta, { color: meta.text, opacity: 0.7 }]}>
                             {lesson.cards.length} ideas · {lesson.estMinutes} min
                           </Text>
                         </View>
-                        <Text style={styles.status}>{done ? '✓' : started ? '···' : '→'}</Text>
+                        <View style={[styles.statusBadge, { backgroundColor: 'rgba(255,255,255,0.6)' }]}>
+                          <Text style={[styles.status, { color: meta.text }]}>{done ? '✓' : started ? '···' : '→'}</Text>
+                        </View>
                       </View>
                     </GlassCard>
                   </Pressable>
@@ -97,7 +99,7 @@ function LessonReader({ lesson, onClose }: { lesson: Lesson | null; onClose: () 
 
   return (
     <Modal visible={Boolean(lesson)} animationType="slide" transparent onRequestClose={onClose}>
-      <PhotoBackground photo={backgrounds.reading}>
+      <LinearGradient colors={gradients.readerSky} style={styles.readerFill}>
         <View style={styles.readerContainer}>
           <View style={styles.readerTopBar}>
             <View style={styles.dotsRow}>
@@ -111,16 +113,13 @@ function LessonReader({ lesson, onClose }: { lesson: Lesson | null; onClose: () 
                 />
               ))}
             </View>
-            <GlassPill label="Close" size="sm" variant="ghost" onPress={onClose} />
+            <GlassPill label="Close" size="sm" variant="ghost" onDark onPress={onClose} />
           </View>
 
           {lesson && card && meta && (
             <Pressable style={styles.readerCardWrap} onPress={advance}>
               <GlassCard style={{ minHeight: 320 }} padding={spacing.lg}>
-                <View style={styles.readerTopicRow}>
-                  <Ionicons name={meta.icon as any} size={14} color={colors.accent} />
-                  <Text style={styles.readerTopic}>{meta.label}</Text>
-                </View>
+                <Text style={styles.readerTopic}>{meta.label}</Text>
                 <Text style={styles.readerHeading}>{card.heading}</Text>
                 <Text style={styles.readerBody}>{card.body}</Text>
               </GlassCard>
@@ -132,7 +131,7 @@ function LessonReader({ lesson, onClose }: { lesson: Lesson | null; onClose: () 
             <GlassPill label={isLast ? 'Finish lesson' : 'Next idea →'} variant="filled" onPress={advance} />
           </View>
         </View>
-      </PhotoBackground>
+      </LinearGradient>
     </Modal>
   );
 }
@@ -143,14 +142,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
   },
+  topicDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
   topicHeading: {
     fontFamily: fonts.heading,
-    fontSize: 18,
+    fontSize: 15,
     color: colors.text,
   },
   lessonRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  statusBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: spacing.sm,
   },
   lessonTitle: {
     fontFamily: fonts.bodyBold,
@@ -165,9 +177,10 @@ const styles = StyleSheet.create({
   },
   status: {
     fontFamily: fonts.bodyBold,
-    fontSize: 16,
-    color: colors.accent,
-    marginLeft: spacing.sm,
+    fontSize: 14,
+  },
+  readerFill: {
+    flex: 1,
   },
   readerContainer: {
     flex: 1,
@@ -194,27 +207,22 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
   },
   dotActive: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.textOnDark,
   },
   dotInactive: {
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(255,255,255,0.4)',
   },
   readerCardWrap: {
     flex: 1,
     justifyContent: 'center',
   },
-  readerTopicRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: spacing.sm,
-  },
   readerTopic: {
     fontFamily: fonts.bodyBold,
-    fontSize: 12,
+    fontSize: 11.5,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     color: colors.accent,
+    marginBottom: spacing.sm,
   },
   readerHeading: {
     fontFamily: fonts.display,

@@ -32,21 +32,19 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: spacing.sm,
     borderRadius: radii.pill,
     backgroundColor: colors.chipInactive,
-    borderWidth: 1,
-    borderColor: colors.border,
+    alignItems: 'center',
   },
   chipActive: {
     backgroundColor: colors.accent,
-    borderColor: colors.accent,
   },
   label: {
     fontFamily: fonts.bodyBold,
-    fontSize: 12,
-    color: colors.textSoft,
+    fontSize: 12.5,
+    color: colors.chipInactiveText,
   },
   labelActive: {
     color: colors.textOnDark,

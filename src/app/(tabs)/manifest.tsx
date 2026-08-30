@@ -10,7 +10,7 @@ import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import type { AffirmationCategory } from '@/data/affirmationSeeds';
 import { useManifestStore, type EntryType } from '@/store/useManifestStore';
-import { colors, fonts, spacing } from '@/theme/theme';
+import { colors, entryTypeMeta, fonts, spacing } from '@/theme/theme';
 
 const typeOptions: { value: EntryType; label: string }[] = [
   { value: 'manifestation', label: 'Manifest' },
@@ -114,28 +114,31 @@ export default function ManifestScreen() {
           <Text style={styles.emptyText}>Nothing here yet — your words will show up as you write.</Text>
         </GlassCard>
       ) : (
-        filteredEntries.map((entry) => (
-          <GlassCard key={entry.id}>
-            <View style={styles.entryHeaderRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.entryTitle}>{entry.title}</Text>
-                <Text style={styles.entryMeta}>
-                  {typeOptions.find((t) => t.value === entry.type)?.label} · {timeAgo(entry.createdAt)}
-                </Text>
+        filteredEntries.map((entry) => {
+          const meta = entryTypeMeta[entry.type];
+          return (
+            <GlassCard key={entry.id} background={meta.bg}>
+              <View style={styles.entryHeaderRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.entryTitle, { color: meta.text }]}>{entry.title}</Text>
+                  <Text style={[styles.entryMeta, { color: meta.text, opacity: 0.65 }]}>
+                    {meta.label} · {timeAgo(entry.createdAt)}
+                  </Text>
+                </View>
+                <Pressable onPress={() => removeEntry(entry.id)}>
+                  <Text style={[styles.removeText, { color: meta.text, opacity: 0.5 }]}>✕</Text>
+                </Pressable>
               </View>
-              <Pressable onPress={() => removeEntry(entry.id)}>
-                <Text style={styles.removeText}>✕</Text>
-              </Pressable>
-            </View>
-            <Text style={styles.entryBody}>{entry.body}</Text>
-          </GlassCard>
-        ))
+              <Text style={[styles.entryBody, { color: meta.text, opacity: 0.85 }]}>{entry.body}</Text>
+            </GlassCard>
+          );
+        })
       )}
 
       <GlassCard>
         <View style={styles.goalHeaderRow}>
           <Text style={styles.cardLabel}>Affirmations</Text>
-          <GlassPill label={showAffirmationForm ? 'Cancel' : '+ Add'} size="sm" onPress={() => setShowAffirmationForm((v) => !v)} />
+          <GlassPill label={showAffirmationForm ? 'Cancel' : '+ Add'} size="sm" variant="ghost" onPress={() => setShowAffirmationForm((v) => !v)} />
         </View>
 
         {showAffirmationForm && (
@@ -152,7 +155,7 @@ export default function ManifestScreen() {
               <Text style={styles.affirmationText}>{a.text}</Text>
               <View style={styles.affirmationActions}>
                 <Pressable onPress={() => toggleFavoriteAffirmation(a.id)}>
-                  <Ionicons name={a.isFavorite ? 'star' : 'star-outline'} size={18} color={colors.accent} />
+                  <Ionicons name={a.isFavorite ? 'star' : 'star-outline'} size={18} color={a.isFavorite ? colors.star : colors.chipInactiveText} />
                 </Pressable>
                 {a.custom && (
                   <Pressable onPress={() => removeAffirmation(a.id)}>

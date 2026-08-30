@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -6,13 +7,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { GlassCard } from '@/components/GlassCard';
 import { GlassPill } from '@/components/GlassPill';
 import { Screen } from '@/components/Screen';
-import { ScreenHeader } from '@/components/ScreenHeader';
-import { learningLibrary } from '@/data/learningLibrary';
 import { useLearningStore } from '@/store/useLearningStore';
+import { learningLibrary } from '@/data/learningLibrary';
 import { useManifestStore } from '@/store/useManifestStore';
 import { usePlannerStore } from '@/store/usePlannerStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
-import { colors, fonts, spacing, topicMeta } from '@/theme/theme';
+import { colors, fonts, gradients, radii, shadow, spacing } from '@/theme/theme';
 
 function greeting() {
   const hour = new Date().getHours();
@@ -43,11 +43,43 @@ export default function TodayScreen() {
     return learningLibrary.find((lesson) => lesson.cards.some((c) => !completedCardIds[c.id])) ?? learningLibrary[0];
   }, [completedCardIds]);
 
-  const name = displayName ? `, ${displayName}` : '';
+  const name = displayName || 'you';
+  const initial = (displayName || 'S').slice(0, 1).toUpperCase();
 
   return (
     <Screen>
-      <ScreenHeader eyebrow="Today" title={`${greeting()}${name}`} subtitle="Here's what's on today." />
+      <View style={styles.headerRow}>
+        <View style={styles.headerLeft}>
+          <LinearGradient colors={gradients.hero} style={styles.avatar}>
+            <Text style={styles.avatarText}>{initial}</Text>
+          </LinearGradient>
+          <View>
+            <Text style={styles.greeting}>{greeting()}</Text>
+            <Text style={styles.displayName}>{name}</Text>
+          </View>
+        </View>
+        <View style={styles.bellButton}>
+          <Ionicons name="notifications-outline" size={18} color={colors.textSoft} />
+          <View style={styles.bellDot} />
+        </View>
+      </View>
+
+      <LinearGradient colors={gradients.hero} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={styles.hero}>
+        <View style={[styles.heroBlob, styles.heroBlobOne]} />
+        <View style={[styles.heroBlob, styles.heroBlobTwo]} />
+        <Text style={styles.heroEyebrow}>Today's focus</Text>
+        <View style={styles.heroStreakRow}>
+          <Text style={styles.heroStreakNumber}>{streak}</Text>
+          <Text style={styles.heroStreakLabel}>day learning streak</Text>
+        </View>
+        <Text style={styles.heroCopy}>Keep it going — one idea a day adds up.</Text>
+        <GlassPill
+          label={`Continue: ${nextLesson.title}`}
+          variant="outline"
+          size="sm"
+          onPress={() => router.push({ pathname: '/(tabs)/learn', params: { lessonId: nextLesson.id } })}
+        />
+      </LinearGradient>
 
       {affirmation && (
         <GlassCard>
@@ -57,32 +89,15 @@ export default function TodayScreen() {
       )}
 
       <View style={styles.row}>
-        <GlassCard style={styles.flexCard}>
-          <Text style={styles.statNumber}>{streak}</Text>
-          <Text style={styles.statLabel}>day learning streak</Text>
+        <GlassCard style={styles.flexCard} background={colors.pastelBlueBg}>
+          <Text style={[styles.statNumber, { color: colors.pastelBlueText }]}>{todayTasks.length}</Text>
+          <Text style={[styles.statLabel, { color: colors.pastelBlueText }]}>tasks today</Text>
         </GlassCard>
-        <GlassCard style={styles.flexCard}>
-          <Text style={styles.statNumber}>{todayTasks.length}</Text>
-          <Text style={styles.statLabel}>things on today's plate</Text>
+        <GlassCard style={styles.flexCard} background={colors.pastelPeachBg}>
+          <Text style={[styles.statNumber, { color: colors.pastelPeachText }]}>{nextLesson.estMinutes}</Text>
+          <Text style={[styles.statLabel, { color: colors.pastelPeachText }]}>min · next lesson</Text>
         </GlassCard>
       </View>
-
-      <GlassCard>
-        <Text style={styles.cardLabel}>Continue learning</Text>
-        <View style={styles.lessonTitleRow}>
-          <Ionicons name={topicMeta[nextLesson.topic].icon as any} size={20} color={colors.text} />
-          <Text style={styles.lessonTitle}>{nextLesson.title}</Text>
-        </View>
-        <Text style={styles.lessonMeta}>{topicMeta[nextLesson.topic].label} · {nextLesson.estMinutes} min</Text>
-        <View style={{ marginTop: spacing.sm, alignSelf: 'flex-start' }}>
-          <GlassPill
-            label="Open lesson"
-            variant="filled"
-            size="sm"
-            onPress={() => router.push({ pathname: '/(tabs)/learn', params: { lessonId: nextLesson.id } })}
-          />
-        </View>
-      </GlassCard>
 
       <GlassCard>
         <Text style={styles.cardLabel}>Today's plan</Text>
@@ -92,7 +107,7 @@ export default function TodayScreen() {
           <View style={{ gap: spacing.xs, marginTop: spacing.xs }}>
             {todayTasks.map((task) => (
               <View key={task.id} style={styles.taskRow}>
-                <GlassPill label="✓" size="sm" variant="ghost" onPress={() => toggleTask(task.id)} />
+                <GlassPill label="✓" size="sm" variant="soft" onPress={() => toggleTask(task.id)} />
                 <Text style={styles.taskText} numberOfLines={1}>
                   {task.title}
                 </Text>
@@ -101,20 +116,22 @@ export default function TodayScreen() {
           </View>
         )}
         <View style={{ marginTop: spacing.sm, alignSelf: 'flex-start' }}>
-          <GlassPill label="Open planner" size="sm" onPress={() => router.push('/(tabs)/planner')} />
+          <GlassPill label="Open planner" size="sm" variant="ghost" onPress={() => router.push('/(tabs)/planner')} />
         </View>
       </GlassCard>
 
       <View style={styles.row}>
         <GlassPill
           label="Journal"
-          icon={<Ionicons name="create-outline" size={16} color={colors.text} />}
+          variant="outline"
+          icon={<Ionicons name="create-outline" size={16} color={colors.accent} />}
           onPress={() => router.push('/(tabs)/manifest')}
           fullWidth
         />
         <GlassPill
           label="Meditate"
-          icon={<Ionicons name="leaf-outline" size={16} color={colors.text} />}
+          variant="outline"
+          icon={<Ionicons name="leaf-outline" size={16} color={colors.accent} />}
           onPress={() => router.push('/(tabs)/profile')}
           fullWidth
         />
@@ -124,6 +141,113 @@ export default function TodayScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontFamily: fonts.display,
+    fontSize: 15,
+    color: colors.textOnDark,
+  },
+  greeting: {
+    fontFamily: fonts.bodyRegular,
+    fontSize: 12.5,
+    color: colors.textSoft,
+  },
+  displayName: {
+    fontFamily: fonts.display,
+    fontSize: 17,
+    color: colors.text,
+  },
+  bellButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.textOnDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadow.card,
+  },
+  bellDot: {
+    position: 'absolute',
+    top: 8,
+    right: 9,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.accentOrange,
+    borderWidth: 1.5,
+    borderColor: colors.textOnDark,
+  },
+  hero: {
+    borderRadius: radii.xl,
+    padding: spacing.lg,
+    overflow: 'hidden',
+    ...shadow.hero,
+  },
+  heroBlob: {
+    position: 'absolute',
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+  },
+  heroBlobOne: {
+    width: 150,
+    height: 150,
+    top: -40,
+    right: -40,
+  },
+  heroBlobTwo: {
+    width: 120,
+    height: 120,
+    bottom: -50,
+    left: -20,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  heroEyebrow: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: 12.5,
+    color: 'rgba(255,255,255,0.85)',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  heroStreakRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+  },
+  heroStreakNumber: {
+    fontFamily: fonts.displayExtra,
+    fontSize: 54,
+    color: colors.textOnDark,
+    lineHeight: 54,
+  },
+  heroStreakLabel: {
+    fontFamily: fonts.bodyRegular,
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.9)',
+  },
+  heroCopy: {
+    fontFamily: fonts.bodyRegular,
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.92)',
+    marginTop: 6,
+    marginBottom: spacing.md,
+  },
   row: {
     flexDirection: 'row',
     gap: spacing.sm,
@@ -148,30 +272,12 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontFamily: fonts.displayExtra,
-    fontSize: 32,
-    color: colors.text,
+    fontSize: 24,
   },
   statLabel: {
     fontFamily: fonts.body,
     fontSize: 12,
-    color: colors.textSoft,
     textAlign: 'center',
-    marginTop: 2,
-  },
-  lessonTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  lessonTitle: {
-    fontFamily: fonts.heading,
-    fontSize: 18,
-    color: colors.text,
-  },
-  lessonMeta: {
-    fontFamily: fonts.body,
-    fontSize: 13,
-    color: colors.textSoft,
     marginTop: 2,
   },
   emptyText: {
